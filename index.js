@@ -96,6 +96,14 @@ export const removeAllListeners = emitter.removeAllListeners.bind(emitter);
 export const registerApp = wrapRegisterApp(WeChat.registerApp);
 
 /**
+ * 启动微信小程序
+ * @method openMiniProgram
+ * @param {String} userName 小程序原始ID
+ * @return {Promise}
+ */
+export const openMiniProgram = wrapApi(WeChat.openMiniProgram);
+
+/**
  * @method registerAppWithDescription
  * @param {String} appid - the app id
  * @param {String} appdesc - the app description
