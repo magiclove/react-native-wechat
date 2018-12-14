@@ -66,11 +66,22 @@ RCT_EXPORT_METHOD(registerApp:(NSString *)appid
     callback(@[[WXApi registerApp:appid] ? [NSNull null] : INVOKE_FAILED]);
 }
 
+RCT_EXPORT_METHOD(openMiniProgram:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    //启动小程序
+    WXLaunchMiniProgramReq *launchMiniProgramReq = [WXLaunchMiniProgramReq object];
+    launchMiniProgramReq.userName = data[@"userName"];  //拉起的小程序的username
+    launchMiniProgramReq.path = data[@"path"];    //拉起小程序页面的可带参路径，不填默认拉起小程序首页
+    launchMiniProgramReq.miniProgramType = WXMiniProgramTypeRelease; //拉起小程序的类型
+    callback(@[[WXApi sendReq:launchMiniProgramReq] ? [NSNull null] : INVOKE_FAILED]);
+}
+
 RCT_EXPORT_METHOD(registerAppWithDescription:(NSString *)appid
                   :(NSString *)appdesc
                   :(RCTResponseSenderBlock)callback)
 {
-    callback(@[[WXApi registerApp:appid withDescription:appdesc] ? [NSNull null] : INVOKE_FAILED]);
+    callback(@[[WXApi registerApp:appid ] ? [NSNull null] : INVOKE_FAILED]);
 }
 
 RCT_EXPORT_METHOD(isWXAppInstalled:(RCTResponseSenderBlock)callback)
@@ -285,7 +296,26 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                                        MediaTag:mediaTagName
                                        callBack:callback];
 
-        } else {
+        } else if ([type isEqualToString:RCTWXShareTypeMini]) {
+            WXMiniProgramObject *miniObject = [WXMiniProgramObject object];
+            miniObject.webpageUrl = aData[@"webpageUrl"];
+            miniObject.userName = aData[@"userName"];
+            miniObject.path = aData[@"path"];
+            miniObject.withShareTicket = [aData[@"withShareTicket"] boolValue];
+            miniObject.miniProgramType = [aData[@"miniProgramType"] integerValue];
+            miniObject.hdImageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:aData[@"hdImageData"]]] ;
+            
+            [self shareToWeixinWithMediaMessage:aScene
+                                          Title:title
+                                    Description:description
+                                         Object:miniObject
+                                     MessageExt:messageExt
+                                  MessageAction:messageAction
+                                     ThumbImage:aThumbImage
+                                       MediaTag:mediaTagName
+                                       callBack:callback];
+            
+        }else {
             callback(@[@"message type unsupported"]);
         }
     }
