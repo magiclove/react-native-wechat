@@ -95,6 +95,7 @@ export const removeAllListeners = emitter.removeAllListeners.bind(emitter);
  */
 export const registerApp = wrapRegisterApp(WeChat.registerApp);
 
+
 /**
  * 启动微信小程序
  * @method openMiniProgram
@@ -102,6 +103,13 @@ export const registerApp = wrapRegisterApp(WeChat.registerApp);
  * @return {Promise}
  */
 export const openMiniProgram = wrapApi(WeChat.openMiniProgram);
+
+/**
+ * 分享微信小程序卡片
+ * @method openMiniProgram
+ * @return {Promise}
+ */
+export const shareToMiniProgram = wrapApi(WeChat.shareToMiniProgram);
 
 /**
  * @method registerAppWithDescription
@@ -275,7 +283,7 @@ export function pay(data) {
   correct('noncestr', 'nonceStr');
   correct('partnerid', 'partnerId');
   correct('timestamp', 'timeStamp');
-  
+
   // FIXME(94cstyles)
   // Android requires the type of the timeStamp field to be a string
   if (Platform.OS === 'android') data.timeStamp = String(data.timeStamp)
