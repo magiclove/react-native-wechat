@@ -34,6 +34,7 @@ import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXFileObject;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
 import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
 import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
@@ -45,9 +46,15 @@ import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.UUID;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by tdzl2_000 on 2015-10-10.
@@ -175,7 +182,39 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     }
 
     @ReactMethod
-    public void openMiniProgram(ReadableMap data, Callback callback) {//打开小程序
+    public void shareToMiniProgram(final ReadableMap data, final Callback callback) {
+        if (api == null) {
+            callback.invoke(NOT_REGISTERED);
+            return;
+        }
+        WXMiniProgramObject miniProgramObj = new WXMiniProgramObject();
+        miniProgramObj.webpageUrl = data.getString("webpageUrl"); // 兼容低版本的网页链接
+        miniProgramObj.miniprogramType = WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;// 正式版:0，测试版:1，体验版:2
+        miniProgramObj.userName = data.getString("userName");//填小程序原始id
+        miniProgramObj.path = data.getString("path");//小程序页面路径
+        final WXMediaMessage msg = new WXMediaMessage(miniProgramObj);
+        msg.title = data.getString("title"); // 小程序消息title
+        msg.description = data.getString("description");// 小程序消息desc
+        OkHttpClient okHttpClient = new OkHttpClient();
+        final Request request = new Request.Builder().url(data.getString("miniProgramCoverUrl")).build();
+        final Call call = okHttpClient.newCall(request);
+        try {
+            Response response = call.execute();
+            msg.thumbData = response.body().bytes();// 小程序消息封面图片，小于128k
+            SendMessageToWX.Req req = new SendMessageToWX.Req();
+            req.transaction = "";
+            req.message = msg;
+            req.scene = SendMessageToWX.Req.WXSceneSession;  // 目前只支持会话
+            boolean success = api.sendReq(req);
+            if (!success) callback.invoke(INVALID_ARGUMENT);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @ReactMethod
+    public void openMiniProgram(ReadableMap data, Callback callback) {//拉起小程序
         if (api == null) {
             callback.invoke(NOT_REGISTERED);
             return;
