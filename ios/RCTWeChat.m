@@ -77,6 +77,12 @@ RCT_EXPORT_METHOD(openMiniProgram:(NSDictionary *)data
     callback(@[[WXApi sendReq:launchMiniProgramReq] ? [NSNull null] : INVOKE_FAILED]);
 }
 
+RCT_EXPORT_METHOD(shareToMiniProgram:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    [self shareToWeixinWithData:data scene:WXSceneSession callback:callback];
+}
+
 RCT_EXPORT_METHOD(registerAppWithDescription:(NSString *)appid
                   :(NSString *)appdesc
                   :(RCTResponseSenderBlock)callback)
