@@ -73,7 +73,7 @@ RCT_EXPORT_METHOD(openMiniProgram:(NSDictionary *)data
     WXLaunchMiniProgramReq *launchMiniProgramReq = [WXLaunchMiniProgramReq object];
     launchMiniProgramReq.userName = data[@"userName"];  //拉起的小程序的username
     launchMiniProgramReq.path = data[@"path"];    //拉起小程序页面的可带参路径，不填默认拉起小程序首页
-    launchMiniProgramReq.miniProgramType = WXMiniProgramTypeRelease; //拉起小程序的类型
+    launchMiniProgramReq.miniProgramType = data[@"miniProgramType"]; //拉起小程序的类型
     callback(@[[WXApi sendReq:launchMiniProgramReq] ? [NSNull null] : INVOKE_FAILED]);
 }
 

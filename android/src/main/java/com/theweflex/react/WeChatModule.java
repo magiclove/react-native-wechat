@@ -222,7 +222,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         WXLaunchMiniProgram.Req req = new WXLaunchMiniProgram.Req();
         req.userName = data.getString("userName"); //填小程序原始id
         req.path = data.getString("path"); //拉起小程序页面的可带参路径，不填默认拉起小程序首页
-        req.miniprogramType = WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE; //可选打开开发版、体验版和正式版
+        req.miniprogramType = data.getInt("miniprogramType"); //可选打开开发版、体验版和正式版
         boolean success = api.sendReq(req);
         if (!success) callback.invoke(INVALID_ARGUMENT);
     }
