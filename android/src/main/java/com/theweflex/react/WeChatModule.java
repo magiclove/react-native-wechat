@@ -189,7 +189,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         }
         WXMiniProgramObject miniProgramObj = new WXMiniProgramObject();
         miniProgramObj.webpageUrl = data.getString("webpageUrl"); // 兼容低版本的网页链接
-        miniProgramObj.miniprogramType = WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;// 正式版:0，测试版:1，体验版:2
+        miniProgramObj.miniprogramType = data.getInt("miniprogramType");// 正式版:0，测试版:1，体验版:2
         miniProgramObj.userName = data.getString("userName");//填小程序原始id
         miniProgramObj.path = data.getString("path");//小程序页面路径
         final WXMediaMessage msg = new WXMediaMessage(miniProgramObj);
